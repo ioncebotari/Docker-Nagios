@@ -80,8 +80,8 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         unzip                               \
         python                              \
                                                 && \
-    apt-get dist-upgrade && \
-    apt-get install monitoring-plugins &&\
+    apt-get dist-upgrade -y && \
+    apt-get install monitoring-plugins -y &&\
     apt-get clean && rm -Rf /var/lib/apt/lists/*
 
 RUN ( egrep -i "^${NAGIOS_GROUP}"    /etc/group || groupadd $NAGIOS_GROUP    )                         && \
