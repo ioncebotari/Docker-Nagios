@@ -80,6 +80,8 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         unzip                               \
         python                              \
                                                 && \
+    apt-get dist-upgrade && \
+    apt-get install monitoring-plugins &&\
     apt-get clean && rm -Rf /var/lib/apt/lists/*
 
 RUN ( egrep -i "^${NAGIOS_GROUP}"    /etc/group || groupadd $NAGIOS_GROUP    )                         && \
@@ -223,6 +225,8 @@ RUN cd /opt/nagiosgraph/etc && \
 
 RUN rm /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh
 
+RUN printf "\ncfg_dir=/etc/nagios-plugins/config\n" >> /opt/nagios/etc/nagios.cfg
+
 # enable all runit services
 RUN ln -s /etc/sv/* /etc/service
 
@@ -236,6 +240,8 @@ RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.co
     ln -s /etc/apache2/conf-available/timezone.conf /etc/apache2/conf-enabled/timezone.conf
 
 EXPOSE 80
+
+COPY files/commands.cfg /opt/nagios/etc/objects/commands.cfg
 
 VOLUME "${NAGIOS_HOME}/var" "${NAGIOS_HOME}/etc" "/var/log/apache2" "/opt/Custom-Nagios-Plugins" "/opt/nagiosgraph/var" "/opt/nagiosgraph/etc"
 
